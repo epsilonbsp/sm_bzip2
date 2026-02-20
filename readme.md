@@ -1,5 +1,5 @@
-# SourceMod Extension Example
-Showcase of how to build [SourceMod Sample Extension](https://github.com/alliedmodders/sourcemod/tree/master/public/sample_ext) using [AMBuild](https://github.com/alliedmodders/ambuild)
+# SourceMod Bzip2 Extension
+Simple implementation of bzip2 extension for SourceMod, so you can easily compress and extract files
 
 Important notes:
 * This is mostly intended for **Counter Strike: Source**, but maybe you can change SDK variable in scripts and it could work for other games
@@ -16,6 +16,9 @@ Important notes:
 ## Usage
     # Install SDK
     .\build.bat install
+
+    # Install dependencies (bzip2)
+    .\build.bat install_vendor
 
     # Builds extension and outputs it in build/output
     .\build.bat build

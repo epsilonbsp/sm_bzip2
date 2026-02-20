@@ -26,6 +26,15 @@ if [ "$1" = "install" ]; then
     fi
 
     popd
+elif [ "$1" = "install_vendor" ]; then
+    if [ ! -d build/vendor ]; then
+        mkdir build/vendor
+        pushd build/vendor
+
+        git clone git://sourceware.org/git/bzip2.git
+
+        popd
+    fi
 elif [ "$1" = "build" ]; then
     ROOT_PATH=$(pwd)
     mkdir -p build/output

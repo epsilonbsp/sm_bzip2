@@ -1,11 +1,20 @@
 import os
 
 # Name of your extension, this will also be its file name.
-projectName = 'sample'
+projectName = 'bzip2'
 
 # smsdk_ext.cpp will be automatically added later
 sourceFiles = [
     'source/extension.cpp',
+
+    # bzip2 library sources
+    'build/vendor/bzip2/blocksort.c',
+    'build/vendor/bzip2/bzlib.c',
+    'build/vendor/bzip2/compress.c',
+    'build/vendor/bzip2/crctable.c',
+    'build/vendor/bzip2/decompress.c',
+    'build/vendor/bzip2/huffman.c',
+    'build/vendor/bzip2/randtable.c',
 ]
 
 project = builder.LibraryProject(projectName)
@@ -29,6 +38,10 @@ for sdk_name in Extension.sdks:
         if not cxx.target.arch in sdk['platforms'][cxx.target.platform]:
             continue
 
-        binary = Extension.HL2ExtConfig(project, builder, cxx, projectName + '.ext.' + sdk['extension'], sdk)
+        binary = Extension.HL2ExtConfig(project, builder, cxx, projectName + '.ext', sdk)
+
+        binary.compiler.cxxincludes += [
+            os.path.join(builder.currentSourcePath, 'build', 'vendor', 'bzip2'),
+        ]
 
 Extension.extensions += builder.Add(project)

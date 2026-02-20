@@ -38,12 +38,12 @@
  */
 
 /* Basic information exposed publicly */
-#define SMEXT_CONF_NAME         "Example Extension"
-#define SMEXT_CONF_DESCRIPTION  "Example extension to help developers"
-#define SMEXT_CONF_VERSION      "0.0.0.0"
-#define SMEXT_CONF_AUTHOR       "AlliedModders, EpsilonBSP"
-#define SMEXT_CONF_URL          "http://www.sourcemod.net/"
-#define SMEXT_CONF_LOGTAG       "EXAMPLE"
+#define SMEXT_CONF_NAME         "Bzip2 Extension"
+#define SMEXT_CONF_DESCRIPTION  "Extension for compressing and extracting files"
+#define SMEXT_CONF_VERSION      "1.0.0.0"
+#define SMEXT_CONF_AUTHOR       "EpsilonBSP"
+#define SMEXT_CONF_URL          "https://github.com/epsilonbsp/sm_bzip2"
+#define SMEXT_CONF_LOGTAG       "BZIP2"
 #define SMEXT_CONF_LICENSE      "GPL"
 #define SMEXT_CONF_DATESTRING   __DATE__
 

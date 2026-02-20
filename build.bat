@@ -27,6 +27,15 @@ if "%~1" == "install" (
     )
 
     popd
+) else if "%~1" == "install_vendor" (
+    if not exist build\vendor (
+        mkdir build\vendor
+        pushd build\vendor
+
+        git clone git://sourceware.org/git/bzip2.git
+
+        popd
+    )
 ) else if "%~1" == "build" (
     set ROOT_PATH=%~dp0
     set ROOT_PATH=!ROOT_PATH:~0,-1!
