@@ -21,12 +21,12 @@ SMEXT_LINK(&g_Bzip2);
 #define BZ2_BUFFER_SIZE 65536
 
 /**
- * native bool BZ2_ExtractFile(const char[] src, const char[] dest);
+ * native bool BZ2_DecompressFile(const char[] src, const char[] dest);
  *
  * Decompresses a .bz2 file at src and writes the result to dest.
  * Returns true on success, false on failure.
  */
-static cell_t Native_BZ2_ExtractFile(IPluginContext *pContext, const cell_t *params) {
+static cell_t Native_BZ2_DecompressFile(IPluginContext *pContext, const cell_t *params) {
     char *src, *dest;
     pContext->LocalToString(params[1], &src);
     pContext->LocalToString(params[2], &dest);
@@ -34,8 +34,6 @@ static cell_t Native_BZ2_ExtractFile(IPluginContext *pContext, const cell_t *par
     FILE *inFile = fopen(src, "rb");
 
     if (!inFile) {
-        pContext->ThrowNativeError("Failed to open source file: %s", src);
-
         return 0;
     }
 
@@ -43,7 +41,6 @@ static cell_t Native_BZ2_ExtractFile(IPluginContext *pContext, const cell_t *par
 
     if (!outFile) {
         fclose(inFile);
-        pContext->ThrowNativeError("Failed to open destination file: %s", dest);
 
         return 0;
     }
@@ -54,7 +51,6 @@ static cell_t Native_BZ2_ExtractFile(IPluginContext *pContext, const cell_t *par
     if (bzError != BZ_OK) {
         fclose(inFile);
         fclose(outFile);
-        pContext->ThrowNativeError("BZ2_bzReadOpen failed (error %d)", bzError);
 
         return 0;
     }
@@ -66,7 +62,6 @@ static cell_t Native_BZ2_ExtractFile(IPluginContext *pContext, const cell_t *par
         int bytesRead = BZ2_bzRead(&bzError, bzFile, buf, sizeof(buf));
 
         if (bzError != BZ_OK && bzError != BZ_STREAM_END) {
-            pContext->ThrowNativeError("BZ2_bzRead failed (error %d)", bzError);
             success = false;
 
             break;
@@ -74,7 +69,6 @@ static cell_t Native_BZ2_ExtractFile(IPluginContext *pContext, const cell_t *par
 
         if (bytesRead > 0) {
             if (fwrite(buf, 1, bytesRead, outFile) != (size_t)bytesRead) {
-                pContext->ThrowNativeError("Failed to write to destination file: %s", dest);
                 success = false;
 
                 break;
@@ -116,8 +110,6 @@ static cell_t Native_BZ2_CompressFile(IPluginContext *pContext, const cell_t *pa
     FILE *inFile = fopen(src, "rb");
 
     if (!inFile) {
-        pContext->ThrowNativeError("Failed to open source file: %s", src);
-
         return 0;
     }
 
@@ -125,7 +117,6 @@ static cell_t Native_BZ2_CompressFile(IPluginContext *pContext, const cell_t *pa
 
     if (!outFile) {
         fclose(inFile);
-        pContext->ThrowNativeError("Failed to open destination file: %s", dest);
 
         return 0;
     }
@@ -136,7 +127,6 @@ static cell_t Native_BZ2_CompressFile(IPluginContext *pContext, const cell_t *pa
     if (bzError != BZ_OK) {
         fclose(inFile);
         fclose(outFile);
-        pContext->ThrowNativeError("BZ2_bzWriteOpen failed (error %d)", bzError);
 
         return 0;
     }
@@ -149,7 +139,6 @@ static cell_t Native_BZ2_CompressFile(IPluginContext *pContext, const cell_t *pa
 
         if (bytesRead == 0) {
             if (ferror(inFile)) {
-                pContext->ThrowNativeError("Failed to read from source file: %s", src);
                 success = false;
             }
 
@@ -159,7 +148,6 @@ static cell_t Native_BZ2_CompressFile(IPluginContext *pContext, const cell_t *pa
         BZ2_bzWrite(&bzError, bzFile, buf, (int)bytesRead);
 
         if (bzError != BZ_OK) {
-            pContext->ThrowNativeError("BZ2_bzWrite failed (error %d)", bzError);
             success = false;
 
             break;
@@ -178,7 +166,7 @@ static cell_t Native_BZ2_CompressFile(IPluginContext *pContext, const cell_t *pa
 }
 
 static const sp_nativeinfo_t g_BZ2Natives[] = {
-    {"BZ2_ExtractFile", Native_BZ2_ExtractFile},
+    {"BZ2_DecompressFile", Native_BZ2_DecompressFile},
     {"BZ2_CompressFile", Native_BZ2_CompressFile},
     {NULL, NULL},
 };

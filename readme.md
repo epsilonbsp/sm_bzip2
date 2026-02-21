@@ -42,6 +42,6 @@ Include `bzip2` in your plugin and use the two available natives:
 BZ2_CompressFile("maps/bhop_bfur.bsp", "maps/bhop_bfur.bsp.bz2");
 BZ2_CompressFile("maps/bhop_bfur.bsp", "maps/bhop_bfur.bsp.bz2", 5);
 
-// Extract a .bz2 file
-BZ2_ExtractFile("maps/bhop_bfur.bsp.bz2", "maps/bhop_bfur.bsp");
+// Decompress a .bz2 file
+BZ2_DecompressFile("maps/bhop_bfur.bsp.bz2", "maps/bhop_bfur.bsp");
 ```

@@ -9,9 +9,8 @@
  * @param src   Path to the source .bz2 file.
  * @param dest  Path to write the decompressed output.
  * @return      True on success, false on failure.
- *              On failure a native error is thrown with the reason.
  */
-native bool BZ2_ExtractFile(const char[] src, const char[] dest);
+native bool BZ2_DecompressFile(const char[] src, const char[] dest);
 
 /**
  * Compresses a file to a .bz2 archive.
@@ -20,7 +19,7 @@ native bool BZ2_ExtractFile(const char[] src, const char[] dest);
  * @param dest      Path to write the compressed .bz2 output.
  * @param blockSize Compression level, 1 (fastest) to 9 (best). Default is 9.
  * @return          True on success, false on failure.
- *                  On failure a native error is thrown with the reason.
+ *                  Throws a native error if blockSize is out of range.
  */
 native bool BZ2_CompressFile(const char[] src, const char[] dest, int blockSize = 9);
 
