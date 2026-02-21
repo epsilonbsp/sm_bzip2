@@ -22,8 +22,8 @@ public:
     void ProcessCompletedTasks();
 
 private:
-    IMutex                  *m_Mutex = nullptr;
-    std::vector<BZ2Task *>   m_CompletedTasks;
+    IMutex*               m_Mutex = nullptr;
+    std::vector<BZ2Task*> m_CompletedTasks;
 };
 
 #endif // SM_BZIP2_EXTENSION_H_

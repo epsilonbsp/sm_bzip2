@@ -22,16 +22,16 @@ SMEXT_LINK(&g_Bzip2);
 #define BZ2_BUFFER_SIZE 65536
 
 enum BZ2Error {
-    BZ2_OK              = 0,
-    BZ2_ERR_SRC_OPEN    = 1,  // failed to open source file
-    BZ2_ERR_DEST_OPEN   = 2,  // failed to open destination file
-    BZ2_ERR_MEM         = 3,  // memory allocation failure
-    BZ2_ERR_DATA        = 4,  // data integrity (CRC) error
-    BZ2_ERR_DATA_MAGIC  = 5,  // not a valid bzip2 stream
-    BZ2_ERR_IO          = 6,  // I/O error during read/write
+    BZ2_OK                 = 0,
+    BZ2_ERR_SRC_OPEN       = 1, // failed to open source file
+    BZ2_ERR_DEST_OPEN      = 2, // failed to open destination file
+    BZ2_ERR_MEM            = 3, // memory allocation failure
+    BZ2_ERR_DATA           = 4, // data integrity (CRC) error
+    BZ2_ERR_DATA_MAGIC     = 5, // not a valid bzip2 stream
+    BZ2_ERR_IO             = 6, // I/O error during read/write
     BZ2_ERR_UNEXPECTED_EOF = 7, // truncated bzip2 stream
-    BZ2_ERR_WRITE       = 8,  // failed to write output file
-    BZ2_ERR_UNKNOWN     = 9,  // other unexpected bzlib error
+    BZ2_ERR_WRITE          = 8, // failed to write output file
+    BZ2_ERR_UNKNOWN        = 9, // other unexpected bzlib error
 };
 
 static BZ2Error MapBZError(int bzError) {
@@ -66,6 +66,7 @@ static cell_t Native_BZ2_DecompressFile(IPluginContext *pContext, const cell_t *
 
     if (!outFile) {
         fclose(inFile);
+
         return BZ2_ERR_DEST_OPEN;
     }
 
@@ -75,6 +76,7 @@ static cell_t Native_BZ2_DecompressFile(IPluginContext *pContext, const cell_t *
     if (bzError != BZ_OK) {
         fclose(inFile);
         fclose(outFile);
+
         return MapBZError(bzError);
     }
 
@@ -86,12 +88,14 @@ static cell_t Native_BZ2_DecompressFile(IPluginContext *pContext, const cell_t *
 
         if (bzError != BZ_OK && bzError != BZ_STREAM_END) {
             errorCode = MapBZError(bzError);
+
             break;
         }
 
         if (bytesRead > 0) {
             if (fwrite(buf, 1, bytesRead, outFile) != (size_t)bytesRead) {
                 errorCode = BZ2_ERR_WRITE;
+
                 break;
             }
         }
@@ -138,6 +142,7 @@ static cell_t Native_BZ2_CompressFile(IPluginContext *pContext, const cell_t *pa
 
     if (!outFile) {
         fclose(inFile);
+
         return BZ2_ERR_DEST_OPEN;
     }
 
@@ -147,6 +152,7 @@ static cell_t Native_BZ2_CompressFile(IPluginContext *pContext, const cell_t *pa
     if (bzError != BZ_OK) {
         fclose(inFile);
         fclose(outFile);
+
         return MapBZError(bzError);
     }
 
@@ -183,10 +189,6 @@ static cell_t Native_BZ2_CompressFile(IPluginContext *pContext, const cell_t *pa
     return (cell_t)errorCode;
 }
 
-// ---------------------------------------------------------------------------
-// Async task
-// ---------------------------------------------------------------------------
-
 enum BZ2TaskType {
     BZ2Task_Decompress,
     BZ2Task_Compress,
@@ -196,7 +198,7 @@ struct BZ2Task : public IThread {
     BZ2TaskType     type;
     char            src[PLATFORM_MAX_PATH];
     char            dest[PLATFORM_MAX_PATH];
-    int             blockSize;  // compress only
+    int             blockSize; // compress only
     BZ2Error        result;
     cell_t          data;
     IChangeableForward *pForward;
@@ -233,9 +235,11 @@ private:
 
         int bzError;
         BZFILE *bzFile = BZ2_bzReadOpen(&bzError, inFile, 0, 0, NULL, 0);
+
         if (bzError != BZ_OK) {
             fclose(inFile);
             fclose(outFile);
+
             return MapBZError(bzError);
         }
 
@@ -244,13 +248,17 @@ private:
 
         while (bzError == BZ_OK) {
             int bytesRead = BZ2_bzRead(&bzError, bzFile, buf, sizeof(buf));
+
             if (bzError != BZ_OK && bzError != BZ_STREAM_END) {
                 errorCode = MapBZError(bzError);
+
                 break;
             }
+
             if (bytesRead > 0) {
                 if (fwrite(buf, 1, bytesRead, outFile) != (size_t)bytesRead) {
                     errorCode = BZ2_ERR_WRITE;
+
                     break;
                 }
             }
@@ -261,6 +269,7 @@ private:
         fclose(outFile);
 
         if (errorCode != BZ2_OK) remove(dest);
+
         return errorCode;
     }
 
@@ -273,9 +282,11 @@ private:
 
         int bzError;
         BZFILE *bzFile = BZ2_bzWriteOpen(&bzError, outFile, blockSize, 0, 30);
+
         if (bzError != BZ_OK) {
             fclose(inFile);
             fclose(outFile);
+
             return MapBZError(bzError);
         }
 
@@ -284,13 +295,18 @@ private:
 
         while (!feof(inFile)) {
             size_t bytesRead = fread(buf, 1, sizeof(buf), inFile);
+
             if (bytesRead == 0) {
                 if (ferror(inFile)) errorCode = BZ2_ERR_IO;
+
                 break;
             }
+
             BZ2_bzWrite(&bzError, bzFile, buf, (int)bytesRead);
+
             if (bzError != BZ_OK) {
                 errorCode = MapBZError(bzError);
+
                 break;
             }
         }
@@ -300,13 +316,10 @@ private:
         fclose(outFile);
 
         if (errorCode != BZ2_OK) remove(dest);
+
         return errorCode;
     }
 };
-
-// ---------------------------------------------------------------------------
-// Async native helpers
-// ---------------------------------------------------------------------------
 
 static cell_t Native_BZ2_DecompressFileAsync(IPluginContext *pContext, const cell_t *params) {
     char *src, *dest;
@@ -314,6 +327,7 @@ static cell_t Native_BZ2_DecompressFileAsync(IPluginContext *pContext, const cel
     pContext->LocalToString(params[2], &dest);
 
     IPluginFunction *pFunc = pContext->GetFunctionById((funcid_t)params[3]);
+
     if (!pFunc) {
         return pContext->ThrowNativeError("Invalid callback function");
     }
@@ -346,6 +360,7 @@ static cell_t Native_BZ2_CompressFileAsync(IPluginContext *pContext, const cell_
     pContext->LocalToString(params[2], &dest);
 
     IPluginFunction *pFunc = pContext->GetFunctionById((funcid_t)params[3]);
+
     if (!pFunc) {
         return pContext->ThrowNativeError("Invalid callback function");
     }
@@ -377,17 +392,9 @@ static cell_t Native_BZ2_CompressFileAsync(IPluginContext *pContext, const cell_
     return 0;
 }
 
-// ---------------------------------------------------------------------------
-// Game frame hook — fires callbacks on the main thread
-// ---------------------------------------------------------------------------
-
 static void OnGameFrame(bool simulating) {
     g_Bzip2.ProcessCompletedTasks();
 }
-
-// ---------------------------------------------------------------------------
-// Native table — must be defined before SDK_OnAllLoaded references it.
-// ---------------------------------------------------------------------------
 
 static const sp_nativeinfo_t g_BZ2Natives[] = {
     {"BZ2_DecompressFile",      Native_BZ2_DecompressFile},
@@ -396,10 +403,6 @@ static const sp_nativeinfo_t g_BZ2Natives[] = {
     {"BZ2_CompressFileAsync",   Native_BZ2_CompressFileAsync},
     {NULL, NULL},
 };
-
-// ---------------------------------------------------------------------------
-// Bzip2 extension methods
-// ---------------------------------------------------------------------------
 
 void Bzip2::QueueCompletedTask(BZ2Task *task) {
     m_Mutex->Lock();
@@ -426,6 +429,7 @@ void Bzip2::ProcessCompletedTasks() {
         }
 
         forwards->ReleaseForward(pForward);
+
         delete task;
     }
 }
@@ -435,10 +439,12 @@ bool Bzip2::SDK_OnLoad(char *error, size_t maxlen, bool late) {
 
     if (!m_Mutex) {
         snprintf(error, maxlen, "Failed to create mutex");
+
         return false;
     }
 
     smutils->AddGameFrameHook(OnGameFrame);
+
     return true;
 }
 

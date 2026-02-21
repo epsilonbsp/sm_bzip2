@@ -7,16 +7,16 @@
 #define _bzip2_included
 
 enum BZ2Error {
-    BZ2_OK              = 0,  /**< Success */
-    BZ2_ERR_SRC_OPEN    = 1,  /**< Failed to open source file */
-    BZ2_ERR_DEST_OPEN   = 2,  /**< Failed to open destination file */
-    BZ2_ERR_MEM         = 3,  /**< Memory allocation failure */
-    BZ2_ERR_DATA        = 4,  /**< Data integrity (CRC) error */
-    BZ2_ERR_DATA_MAGIC  = 5,  /**< Not a valid bzip2 stream */
-    BZ2_ERR_IO          = 6,  /**< I/O error during read/write */
+    BZ2_OK                 = 0, /**< Success */
+    BZ2_ERR_SRC_OPEN       = 1, /**< Failed to open source file */
+    BZ2_ERR_DEST_OPEN      = 2, /**< Failed to open destination file */
+    BZ2_ERR_MEM            = 3, /**< Memory allocation failure */
+    BZ2_ERR_DATA           = 4, /**< Data integrity (CRC) error */
+    BZ2_ERR_DATA_MAGIC     = 5, /**< Not a valid bzip2 stream */
+    BZ2_ERR_IO             = 6, /**< I/O error during read/write */
     BZ2_ERR_UNEXPECTED_EOF = 7, /**< Truncated bzip2 stream */
-    BZ2_ERR_WRITE       = 8,  /**< Failed to write output file */
-    BZ2_ERR_UNKNOWN     = 9,  /**< Other unexpected error */
+    BZ2_ERR_WRITE          = 8, /**< Failed to write output file */
+    BZ2_ERR_UNKNOWN        = 9, /**< Other unexpected error */
 };
 
 /**
@@ -70,10 +70,9 @@ native void BZ2_DecompressFileAsync(const char[] src, const char[] dest, BZ2Call
  */
 native void BZ2_CompressFileAsync(const char[] src, const char[] dest, BZ2Callback callback, any data = 0, int blockSize = 9);
 
-public Extension __ext_bzip2 =
-{
-    name    = "BZip2 Extension",
-    file    = "bzip2.ext",
+public Extension __ext_bzip2 = {
+    name     = "BZip2 Extension",
+    file     = "bzip2.ext",
     autoload = 1,
     required = 1,
 };
