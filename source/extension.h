@@ -7,7 +7,7 @@
 #include "smsdk_ext.h"
 #include <vector>
 
-struct BZ2Task;
+struct Bzip2_Task;
 
 class Bzip2 : public SDKExtension {
 public:
@@ -16,14 +16,14 @@ public:
     virtual void SDK_OnAllLoaded();
 
     // Called from the worker thread to queue a finished task.
-    void QueueCompletedTask(BZ2Task *task);
+    void QueueCompletedTask(Bzip2_Task *task);
 
     // Called each game frame to fire pending callbacks on the main thread.
     void ProcessCompletedTasks();
 
 private:
-    IMutex*               m_Mutex = nullptr;
-    std::vector<BZ2Task*> m_CompletedTasks;
+    IMutex*                  m_mutex = nullptr;
+    std::vector<Bzip2_Task*> m_completed_tasks;
 };
 
 #endif // SM_BZIP2_EXTENSION_H_
