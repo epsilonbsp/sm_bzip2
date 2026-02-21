@@ -32,16 +32,64 @@ Important notes:
 ```
 
 ## Usage
-Include `bzip2` in your plugin and use the two available natives:
+Include `bzip2` in your plugin:
 
 ```sourcepawn
 #include <bzip2>
+```
 
+### Synchronous
+
+```sourcepawn
 // Compress a file into a .bz2 archive
 // blockSize is optional (1 = fastest, 9 = best compression), defaults to 9
-BZ2_CompressFile("maps/bhop_bfur.bsp", "maps/bhop_bfur.bsp.bz2");
-BZ2_CompressFile("maps/bhop_bfur.bsp", "maps/bhop_bfur.bsp.bz2", 5);
+BZ2Error err = BZ2_CompressFile("maps/bhop_bfur.bsp", "maps/bhop_bfur.bsp.bz2");
+BZ2Error err = BZ2_CompressFile("maps/bhop_bfur.bsp", "maps/bhop_bfur.bsp.bz2", 5);
 
 // Decompress a .bz2 file
-BZ2_DecompressFile("maps/bhop_bfur.bsp.bz2", "maps/bhop_bfur.bsp");
+BZ2Error err = BZ2_DecompressFile("maps/bhop_bfur.bsp.bz2", "maps/bhop_bfur.bsp");
 ```
+
+### Asynchronous
+
+The async variants run on a background thread and invoke a callback on the main thread when done:
+
+```sourcepawn
+void OnDecompressDone(BZ2Error error, const char[] src, const char[] dest, any data)
+{
+    if (error == BZ2_OK)
+        PrintToServer("Decompressed %s -> %s", src, dest);
+    else
+        PrintToServer("Decompress failed: %d", error);
+}
+
+void OnCompressDone(BZ2Error error, const char[] src, const char[] dest, any data)
+{
+    if (error == BZ2_OK)
+        PrintToServer("Compressed %s -> %s", src, dest);
+}
+
+// Decompress asynchronously
+BZ2_DecompressFileAsync("maps/bhop_bfur.bsp.bz2", "maps/bhop_bfur.bsp", OnDecompressDone);
+
+// Compress asynchronously (blockSize is optional, defaults to 9)
+BZ2_CompressFileAsync("maps/bhop_bfur.bsp", "maps/bhop_bfur.bsp.bz2", OnCompressDone);
+BZ2_CompressFileAsync("maps/bhop_bfur.bsp", "maps/bhop_bfur.bsp.bz2", OnCompressDone, .blockSize=5);
+```
+
+### Error handling
+
+Both sync and async natives return/pass a `BZ2Error` value:
+
+| Value | Constant | Meaning |
+|-------|----------|---------|
+| 0 | `BZ2_OK` | Success |
+| 1 | `BZ2_ERR_SRC_OPEN` | Failed to open source file |
+| 2 | `BZ2_ERR_DEST_OPEN` | Failed to open destination file |
+| 3 | `BZ2_ERR_MEM` | Memory allocation failure |
+| 4 | `BZ2_ERR_DATA` | Data integrity (CRC) error |
+| 5 | `BZ2_ERR_DATA_MAGIC` | Not a valid bzip2 stream |
+| 6 | `BZ2_ERR_IO` | I/O error during read/write |
+| 7 | `BZ2_ERR_UNEXPECTED_EOF` | Truncated bzip2 stream |
+| 8 | `BZ2_ERR_WRITE` | Failed to write output file |
+| 9 | `BZ2_ERR_UNKNOWN` | Other unexpected error |
