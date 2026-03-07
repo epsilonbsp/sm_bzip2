@@ -15,7 +15,6 @@ if "%~1" == "install" (
 
         git clone https://github.com/alliedmodders/sourcemod --recursive
         git clone https://github.com/alliedmodders/metamod-source
-        git clone https://github.com/alliedmodders/hl2sdk hl2sdk-!SDK! -b !SDK!
         git clone https://github.com/alliedmodders/ambuild
 
         python -m venv venv
@@ -45,12 +44,9 @@ if "%~1" == "install" (
 
     pushd build\output
 
-    python ..\..\configure.py ^
+    python ..\..\configure.py --enable-optimize ^
         --sm-path=!ROOT_PATH!\build\sdk_root\sourcemod ^
-        --mms-path=!ROOT_PATH!\build\sdk_root\metamod-source ^
-        --hl2sdk-root=!ROOT_PATH!\build\sdk_root ^
-        --hl2sdk-manifest-path=!ROOT_PATH!\build\sdk_root\sourcemod\hl2sdk-manifests ^
-        --sdks=!SDK!
+        --mms-path=!ROOT_PATH!\build\sdk_root\metamod-source
 
     ambuild
 

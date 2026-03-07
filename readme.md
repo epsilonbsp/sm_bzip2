@@ -1,10 +1,6 @@
 # SourceMod Bzip2 Extension
 Simple implementation of bzip2 extension for SourceMod, so you can easily compress and extract files
 
-Important notes:
-* This is mostly intended for **Counter Strike: Source**, but maybe you can change SDK variable in scripts and it could work for other games
-* Requirement list might be incomplete
-
 ## Build Requirements
 ### Windows
 * Download and install [Visual Studio](https://visualstudio.microsoft.com/) (Desktop development with C++)
@@ -14,7 +10,7 @@ Important notes:
 ### Linux
 * Install Dependencies
 
-      sudo apt install git clang python3 python-is-python3 python3-pip python3.12-venv
+      sudo apt install git clang python3 python-is-python3 python3-pip python3.12-venv  gcc-multilib g++-multilib
 
 ## Building
 ```sh

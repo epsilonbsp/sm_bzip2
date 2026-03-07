@@ -4,22 +4,6 @@ from ambuild2 import run
 parser = run.BuildParser(sourcePath=sys.path[0], api='2.2')
 
 parser.options.add_argument(
-    '--hl2sdk-root',
-    type=str,
-    dest='hl2sdk_root',
-    default=None,
-    help='Root search folder for HL2SDKs'
-)
-
-parser.options.add_argument(
-    '--hl2sdk-manifest-path',
-    type=str,
-    dest='hl2sdk_manifest',
-    default=None,
-    help='Path to HL2SDK Manifests'
-)
-
-parser.options.add_argument(
     '--sm-path',
     type=str,
     dest='sm_path',
@@ -52,18 +36,11 @@ parser.options.add_argument(
 )
 
 parser.options.add_argument(
-    '-s', '--sdks',
-    default='present',
-    dest='sdks',
-    help='Build against specified SDKs; valid args are "none", "all", "present", or comma-delimited list of engine names'
-)
-
-parser.options.add_argument(
     '--targets',
     type=str,
     dest='targets',
     default=None,
-    help='Override the target architecture (use commas to separate multiple targets).'
+    help="Override the target architecture (use commas to separate multiple targets)."
 )
 
 parser.Configure()
