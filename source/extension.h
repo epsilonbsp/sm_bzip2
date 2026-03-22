@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-// Copyright (C) 2026 EpsilonBSP
+// Copyright (C) 2026 epsilonbsp
 
 #ifndef SM_BZIP2_EXTENSION_H_
 #define SM_BZIP2_EXTENSION_H_

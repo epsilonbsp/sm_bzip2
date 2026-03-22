@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-// Copyright (C) 2026 EpsilonBSP
+// Copyright (C) 2026 epsilonbsp
 
 #ifndef _INCLUDE_SOURCEMOD_EXTENSION_CONFIG_H_
 #define _INCLUDE_SOURCEMOD_EXTENSION_CONFIG_H_
@@ -13,7 +13,7 @@
 #define SMEXT_CONF_NAME         "Bzip2 Extension"
 #define SMEXT_CONF_DESCRIPTION  "Extension for compressing and extracting files"
 #define SMEXT_CONF_VERSION      "1.0.0.0"
-#define SMEXT_CONF_AUTHOR       "EpsilonBSP"
+#define SMEXT_CONF_AUTHOR       "epsilonbsp"
 #define SMEXT_CONF_URL          "https://github.com/epsilonbsp/sm_bzip2"
 #define SMEXT_CONF_LOGTAG       "BZIP2"
 #define SMEXT_CONF_LICENSE      "GPL"
